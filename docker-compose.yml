@@ -1,0 +1,28 @@
+version: '3.1'
+services:
+  login-api:
+    build: .
+    volumes:
+      - ./login-api
+    container_name: login-api
+    ports:
+      - "8090:8090"
+    depends_on:
+      - db_login
+      - memcached_login
+  db_login:
+    image: mysql:5.7
+    container_name: db_login
+    restart: always
+    volumes:
+      - .login_api.sql:/docker-entrypoint-initdb.d/docker.sql
+    environment:
+      MYSQL_ROOT_PASSWORD: password
+      MYSQL_DATABASE: login_api
+    ports:
+      - "3306:3306"
+  memcached_login:
+    container_name: memcached_login
+    image: memcached:latest
+    ports:
+      - "11211:11211"
